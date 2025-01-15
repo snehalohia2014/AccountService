@@ -1,0 +1,37 @@
+services:
+  myapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: account-service  # Moved here, outside of `build`
+    ports:
+      - "8081:8081"
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/Account_Service
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - bank-network  # Referencing the network correctly
+
+  mysql:
+    image: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Account_Service
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: root
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - bank-network  # Referencing the network correctly
+
+networks:
+  bank-network:
+    driver: bridge  # Defining the network at the root level
+
+volumes:
+  db_data:
